@@ -1,9 +1,9 @@
 open Ast
 
 let rec isValue = function
-  | Num _ | Bool _ | Var _ -> true
-  | Abs (_, n) when isValue n -> true
-  | _ -> false
+| Num _ | Bool _ | Var _ -> true
+| Abs (_, n) when isValue n -> true
+| _ -> false
 
 let rec subst old rep = function
 | Num n -> Num n
@@ -15,6 +15,6 @@ let rec subst old rep = function
 
 let rec eval = function
 | m when isValue m -> m
-| App (Abs (x, m), n) -> subst x (eval n) m
+| App (Abs (x, m), n) -> eval @@ subst x (eval n) m
 | App (m, n) -> App (eval m, eval n)
 | Abs (x, m) -> Abs (x, eval m)

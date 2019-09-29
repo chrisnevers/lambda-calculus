@@ -13,9 +13,11 @@
 
 %start<Ast.exp> program
 %nonassoc TIN
-%nonassoc TLPAREN TID TNUM TBOOL TLAMBDA TDOT
+%nonassoc TLPAREN TID TLAMBDA TDOT
 %right TLET
 %left TAPP
+/* TODO: check below precedence levels */
+%left TNUM TBOOL
 
 %%
 

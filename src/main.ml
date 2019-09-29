@@ -14,7 +14,6 @@ let rec repl () = begin try
   let input = read_line () in
   let buffer = Lexing.from_string input in
   let ast = Parser.program token buffer in
-  print_endline @@ ppExp ast;
   let ty, constraints, _ = cg [] ast in
   let subs = u constraints [] in
   let ty = getType subs ty in
