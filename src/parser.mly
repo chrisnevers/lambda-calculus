@@ -7,11 +7,14 @@
 %token<bool> TBOOL
 %token TLAMBDA
 %token TDOT
+%token TLET TEQ TIN
 %token TLPAREN TRPAREN
 %token TEOF
 
 %start<Ast.exp> program
-%nonassoc TLPAREN TID TNUM TBOOL TDOT TLAMBDA
+%nonassoc TIN
+%nonassoc TLPAREN TID TNUM TBOOL TLAMBDA TDOT
+%right TLET
 %left TAPP
 
 %%
@@ -26,3 +29,4 @@ exp:
   | TLAMBDA TID TDOT exp  { Abs ($2, $4) }
   | TLPAREN exp TRPAREN   { $2 }
   | exp exp %prec TAPP    { App ($1, $2) }
+  | TLET TID TEQ exp TIN exp { App (Abs ($2, $6), $4) }

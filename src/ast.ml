@@ -7,8 +7,8 @@ type exp =
 
 let rec ppExp = function
 | Var id -> id
-| Abs (id, e) -> "λ" ^ id ^ "." ^ ppExp e
-| App (e, e') -> ppExp e ^ " " ^ ppExp e'
+| Abs (id, e) -> "(λ" ^ id ^ "." ^ ppExp e ^ ")"
+| App (e, e') -> "[" ^ ppExp e ^ " " ^ ppExp e' ^ "]"
 | Num i -> string_of_int i
 | Bool true -> "True"
 | Bool false -> "False"

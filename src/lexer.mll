@@ -20,6 +20,9 @@ rule token = parse
   | ')'       { TRPAREN }
   | "True"    { TBOOL true }
   | "False"   { TBOOL false }
+  | "let"     { TLET }
+  | "in"      { TIN }
+  | "="       { TEQ }
   | id as id  { TID id }
   | num as n  { TNUM (int_of_string n) }
   | eof       { TEOF }
