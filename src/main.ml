@@ -2,6 +2,7 @@ open Lexer
 open Parser
 open Constraint
 open Unify
+open Eval
 open Ast
 
 let getType subs = function
@@ -16,7 +17,8 @@ let rec repl () = begin try
   let ty, constraints, _ = cg [] ast in
   let subs = u constraints [] in
   let ty = getType subs ty in
-  print_endline @@ ppExp ast ^ " : " ^ ppTy ty;
+  let res = eval ast in
+  print_endline @@ ppExp res ^ " : " ^ ppTy ty;
   with
   | Error | LexerError -> print_endline "Syntax Error"
   | UnificationError msg -> print_endline msg
