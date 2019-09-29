@@ -4,11 +4,6 @@ open Ast
 exception UnificationError of string
 let error msg = raise @@ UnificationError ("Typecheck Error: " ^ msg)
 
-(*
-  U : [C] -> [A=T] -> [A=T]
-  [C]   - Set of constraints
-  [A=T] - Set of solutions from variables to types
-*)
 type s = S of string * ty
 
 (* Solution pretty printers *)
@@ -56,6 +51,11 @@ let rec replaceSol replaceThis withThis s =
   | S (id, r) :: tl when id = replaceThis -> S (id, withThis) :: _rec tl
   | S (id, r) :: tl -> S (id, _sub r) :: _rec tl
 
+(*
+  U : [C] -> [S] -> [S]
+  [C] - Set of constraints
+  [S] - Set of solutions (A = T) from variables to types
+*)
 let rec u c s = match c with
 (* No constraints to solve *)
 | [] -> s
