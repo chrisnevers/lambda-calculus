@@ -17,10 +17,10 @@ type ty =
 | TyInt
 | TyBool
 | TyFn of ty * ty
-| TyVar of int
+| TyVar of string
 
 let rec ppTy = function
 | TyInt -> "Int"
 | TyBool -> "Bool"
-| TyFn (t, t') -> ppTy t ^ " -> " ^ ppTy t'
-| TyVar i -> "'" ^ Char.escaped @@ Char.chr (97 + i)
+| TyFn (t, t') -> ppTy t ^ " ⇒ " ^ ppTy t'
+| TyVar id -> "'" ^ id
