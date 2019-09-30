@@ -9,16 +9,19 @@ let getType subs = function
 | TyVar id -> lookupTy id subs
 | ow -> ow
 
-let rec repl () = begin try
-  print_string "> ";
-  let input = read_line () in
-  let buffer = Lexing.from_string input in
+let interp buffer =
   let ast = Parser.program token buffer in
   let ty, constraints, _ = cg [] ast in
   let subs = u constraints [] in
   let ty = getType subs ty in
   let res = eval ast in
-  print_endline @@ ppExp res ^ " : " ^ ppTy ty;
+  print_endline @@ ppExp res ^ " : " ^ ppTy ty
+
+let rec repl () = begin try
+  print_string "> ";
+  let input = read_line () in
+  let buffer = Lexing.from_string input in
+  interp buffer
   with
   | Error | LexerError -> print_endline "Syntax Error"
   | UnificationError msg -> print_endline msg
@@ -26,7 +29,16 @@ let rec repl () = begin try
   end;
   repl ()
 
+let runFile file =
+  let chan = open_in file in
+  let buffer = Lexing.from_channel chan in
+  interp buffer;
+  close_in chan
+
 let _ =
+  if Array.length Sys.argv > 1 then
+    runFile Sys.argv.(1)
+  else
   try repl ()
   with End_of_file -> begin
     print_endline "";

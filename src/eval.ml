@@ -2,7 +2,7 @@ open Ast
 
 let rec isValue = function
 | Num _ | Bool _ | Var _ -> true
-| Abs (_, n) when isValue n -> true
+| Abs (_, n) -> true
 | _ -> false
 
 let rec subst old rep = function
@@ -16,7 +16,7 @@ let rec subst old rep = function
 
 let rec eval = function
 | m when isValue m -> m
-| App (Abs (x, m), n) -> eval @@ subst x (eval n) m
+| App (Abs (x, m), n) when isValue n -> eval @@ subst x (eval n) m
 | App (m, n) -> App (eval m, eval n)
 | Abs (x, m) -> Abs (x, eval m)
 | Binop (op, l, r) ->

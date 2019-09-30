@@ -7,7 +7,7 @@ TEST_FLAGS=-use-ocamlfind -pkgs ${TEST_PKGS} -Is src -use-menhir
 all: main
 
 main:
-	ocamlbuild ${BUILD_FLAGS} src/main.native --
+	ocamlbuild ${BUILD_FLAGS} src/main.native
 
 debug:
 	ocamlbuild ${BUILD_FLAGS} ${DEBUG_FLAGS} src/main.d.byte
