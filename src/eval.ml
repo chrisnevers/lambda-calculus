@@ -1,8 +1,7 @@
 open Ast
 
 let rec isValue = function
-| Num _ | Bool _ | Var _ -> true
-| Abs (_, n) -> true
+| Num _ | Bool _ | Abs _ -> true
 | _ -> false
 
 let rec subst old rep = function
@@ -20,8 +19,6 @@ let rec eval = function
 | App (m, n) -> App (eval m, eval n)
 | Abs (x, m) -> Abs (x, eval m)
 | Binop (op, l, r) ->
-  let l' = eval l in
-  let r' = eval r in
-  match op with
-  | Add -> Num (getNum l' + getNum r')
-  | Sub -> Num (getNum l' - getNum r')
+  match op, eval l, eval r with
+  | Add, Num l, Num r -> Num (l + r)
+  | Sub, Num l, Num r -> Num (l + r)

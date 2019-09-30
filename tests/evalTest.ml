@@ -23,6 +23,10 @@ let evalLet () =
   let ast = eval @@ parseString "let x = (\\ x . x) in let y = (\\ y . y) in x y" in
   assert_equal ast (Abs ("y", Var "y"))
 
+let evalAdd () =
+  let ast = eval @@ parseString "let x = \\ x . x + 5 in x 4" in
+  assert_equal ast (Num 9)
+
 let suite =
   "Tests" >:::
   [
@@ -31,6 +35,7 @@ let suite =
     "evalAbs"   >:: evalAbs;
     "evalApp"   >:: evalApp;
     "evalLet"   >:: evalLet;
+    "evalAdd"   >:: evalAdd;
   ]
 
 let evalTests () = run_test_tt_main suite
