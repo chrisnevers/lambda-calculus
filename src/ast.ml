@@ -13,6 +13,7 @@ type exp =
 | Num of int
 | Bool of bool
 | Binop of op * exp * exp
+| If of exp * exp * exp
 
 let rec ppExp = function
 | Var id -> id
@@ -22,6 +23,7 @@ let rec ppExp = function
 | Bool true -> "True"
 | Bool false -> "False"
 | Binop (o, l, r) -> ppExp l ^ " " ^ ppOp o ^ " " ^ ppExp r
+| If (c, t, e) -> "if " ^ ppExp c ^ " " ^ ppExp t ^ " " ^ ppExp e
 
 type ty =
 | TyInt

@@ -1,0 +1,5 @@
+let id =
+  let x = \ x . x in
+  x
+in
+id 5

@@ -16,8 +16,12 @@ let rec subst old rep = function
 let rec eval = function
 | m when isValue m -> m
 | App (Abs (x, m), n) when isValue n -> eval @@ subst x (eval n) m
-| App (m, n) -> App (eval m, eval n)
+| App (m, n) -> eval @@ App (eval m, eval n)
 | Abs (x, m) -> Abs (x, eval m)
+| If (c, t, e) -> begin match eval c with
+  | Bool true -> eval t
+  | Bool false -> eval e
+  end
 | Binop (op, l, r) ->
   match op, eval l, eval r with
   | Add, Num l, Num r -> Num (l + r)

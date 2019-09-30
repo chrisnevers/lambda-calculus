@@ -22,6 +22,9 @@ rule token = parse
   | '-'       { TSUB }
   | "True"    { TBOOL true }
   | "False"   { TBOOL false }
+  | "if"      { TIF }
+  | "else"    { TELSE }
+  | "then"    { TTHEN }
   | "let"     { TLET }
   | "in"      { TIN }
   | "="       { TEQ }

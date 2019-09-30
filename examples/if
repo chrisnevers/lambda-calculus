@@ -1,0 +1,6 @@
+let x = if False then
+          4 + 4
+        else
+          5 + 9
+in
+x
