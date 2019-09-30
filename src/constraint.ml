@@ -36,3 +36,7 @@ let rec cg gamma = function
 | Num _ -> TyInt, [], []
 | Bool _ -> TyBool, [], []
 | Var id -> lookup (TyVar id) gamma, [], []
+| Binop (op, l, r) when isIntToIntOp op ->
+  let t1, c1, a1 = cg gamma l in
+  let t2, c2, a2 = cg gamma r in
+  TyInt, c1 @ c2 @ [Eq (t1, TyInt); Eq (t2, TyInt)], a1 @ a2

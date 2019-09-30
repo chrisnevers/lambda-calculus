@@ -1,9 +1,18 @@
+type op =
+| Add
+| Sub
+
+let ppOp = function
+| Add -> "+"
+| Sub -> "-"
+
 type exp =
 | Var of string
 | Abs of string * exp
 | App of exp * exp
 | Num of int
 | Bool of bool
+| Binop of op * exp * exp
 
 let rec ppExp = function
 | Var id -> id
@@ -12,6 +21,7 @@ let rec ppExp = function
 | Num i -> string_of_int i
 | Bool true -> "True"
 | Bool false -> "False"
+| Binop (o, l, r) -> ppExp l ^ " " ^ ppOp o ^ " " ^ ppExp r
 
 type ty =
 | TyInt
@@ -24,3 +34,10 @@ let rec ppTy = function
 | TyBool -> "Bool"
 | TyFn (t, t') -> ppTy t ^ " ⇒ " ^ ppTy t'
 | TyVar id -> "'" ^ id
+
+let getNum = function
+| Num n -> n
+
+let isIntToIntOp = function
+| Add | Sub -> true
+| _ -> false

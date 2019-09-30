@@ -18,6 +18,8 @@ rule token = parse
   | '.'       { TDOT }
   | '('       { TLPAREN }
   | ')'       { TRPAREN }
+  | '+'       { TADD }
+  | '-'       { TSUB }
   | "True"    { TBOOL true }
   | "False"   { TBOOL false }
   | "let"     { TLET }
