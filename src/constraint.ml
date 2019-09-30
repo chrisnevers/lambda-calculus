@@ -60,3 +60,23 @@ let rec cg gamma = function
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
   TyProd (t1, t2), c1 @ c2, a1 @ a2
+| Inl e ->
+  let t1, c1, a1 = cg gamma e in
+  let a = Gensym.gen_str "a" in
+  let b = Gensym.gen_str "b" in
+  TySum (TyVar a, TyVar b), c1 @ [Eq (t1, TyVar a); Eq (TyVar b, TyVar b)], a1 @ [a; b]
+| Inr e ->
+  let t1, c1, a1 = cg gamma e in
+  let a = Gensym.gen_str "a" in
+  let b = Gensym.gen_str "b" in
+  TySum (TyVar a, TyVar b), c1 @ [Eq (t1, TyVar b); Eq (TyVar a, TyVar a)], a1 @ [a; b]
+| Match (c, l, r) ->
+  let t1, c1, a1 = cg gamma c in
+  let t2, c2, a2 = cg gamma l in
+  let t3, c3, a3 = cg gamma r in
+  let v = Gensym.gen_str "s" in
+  let v1 = Gensym.gen_str "a" in
+  let v2 = Gensym.gen_str "b" in
+  TyVar v,
+  c1 @ c2 @ c3 @ [Eq (t1, TySum (TyVar v1, TyVar v2)); Eq (t2, TyFn (TyVar v1, TyVar v)); Eq (t3, TyFn (TyVar v2, TyVar v))],
+  a1 @ a2 @ a3 @ [v; v1; v2]

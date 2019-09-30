@@ -27,6 +27,8 @@ let rec substTy replaceThis withThis = function
   TyFn (substTy replaceThis withThis l, substTy replaceThis withThis r)
 | TyProd (l, r) ->
   TyProd (substTy replaceThis withThis l, substTy replaceThis withThis r)
+| TySum (l, r) ->
+  TySum (substTy replaceThis withThis l, substTy replaceThis withThis r)
 
 (*
   Goes through the constraints and replaces occurences of the
@@ -61,11 +63,17 @@ let rec replaceSol replaceThis withThis s =
 let rec u c s = match c with
 (* No constraints to solve *)
 | [] -> s
+(*
+  Preserve type variables that are equated to each other.
+  This is to pretty print sum types, when we only discover one of it's types.
+ *)
+| Eq (TyVar a, TyVar b) :: c when a = b -> u c (s @ [S (a, TyVar b)])
 (* Useless constraint, no info added *)
 | Eq (t, t') :: c when t = t' -> u c s
 (* Two functions/products must have same param and return type *)
 | Eq (TyFn (t1, t2), TyFn (t3, t4)) :: c
-| Eq (TyProd (t1, t2), TyProd (t3, t4)) :: c ->
+| Eq (TyProd (t1, t2), TyProd (t3, t4)) :: c
+| Eq (TySum (t1, t2), TySum (t3, t4)) :: c ->
   u (Eq (t1, t3) :: Eq (t2, t4) :: c) s
 (*
   e.g. TyVar x ≡ Int

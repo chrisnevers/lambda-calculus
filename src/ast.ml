@@ -20,6 +20,9 @@ type exp =
 | Unop of op * exp
 | If of exp * exp * exp
 | Pair of exp * exp
+| Inl of exp
+| Inr of exp
+| Match of exp * exp * exp
 
 let rec ppExp = function
 | Var id -> id
@@ -32,6 +35,9 @@ let rec ppExp = function
 | Unop (o, e) -> ppOp o ^ " " ^ ppExp e
 | If (c, t, e) -> "if " ^ ppExp c ^ " " ^ ppExp t ^ " " ^ ppExp e
 | Pair (l, r) -> "(" ^ ppExp l ^ ", " ^ ppExp r ^ ")"
+| Inl e -> "inl " ^ ppExp e
+| Inr e -> "inr " ^ ppExp e
+| Match (c, l, r) -> "match " ^ ppExp c ^ " | " ^ ppExp l ^ " | " ^ ppExp r
 
 type ty =
 | TyInt
@@ -39,13 +45,15 @@ type ty =
 | TyFn of ty * ty
 | TyVar of string
 | TyProd of ty * ty
+| TySum of ty * ty
 
 let rec ppTy = function
 | TyInt -> "Int"
 | TyBool -> "Bool"
 | TyFn (t, t') -> ppTy t ^ " ⇒ " ^ ppTy t'
 | TyVar id -> "'" ^ id
-| TyProd (l, r) -> ppTy l ^ " × " ^ ppTy r
+| TyProd (l, r) -> "(" ^ ppTy l ^ " × " ^ ppTy r ^ ")"
+| TySum (l, r) -> "(" ^ ppTy l ^ " + " ^ ppTy r ^ ")"
 
 let getNum = function
 | Num n -> n

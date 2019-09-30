@@ -30,7 +30,11 @@ rule token = parse
   | "in"      { TIN }
   | "fst"     { TFST }
   | "snd"     { TSND }
-  | "="       { TEQ }
+  | "inl"     { TINL }
+  | "inr"     { TINR }
+  | "match"   { TMATCH }
+  | '|'       { TBAR }
+  | '='       { TEQ }
   | id as id  { TID id }
   | num as n  { TNUM (int_of_string n) }
   | eof       { TEOF }

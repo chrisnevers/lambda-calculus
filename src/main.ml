@@ -5,8 +5,11 @@ open Unify
 open Eval
 open Ast
 
-let getType subs = function
+let rec getType subs = function
 | TyVar id -> lookupTy id subs
+| TyFn (l, r) -> TyFn (getType subs l, getType subs r)
+| TyProd (l, r) -> TyProd (getType subs l, getType subs r)
+| TySum (l, r) -> TySum (getType subs l, getType subs r)
 | ow -> ow
 
 let interp buffer =
