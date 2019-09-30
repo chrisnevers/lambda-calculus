@@ -1,10 +1,14 @@
 type op =
 | Add
 | Sub
+| Fst
+| Snd
 
 let ppOp = function
 | Add -> "+"
 | Sub -> "-"
+| Fst -> "fst"
+| Snd -> "snd"
 
 type exp =
 | Var of string
@@ -13,7 +17,9 @@ type exp =
 | Num of int
 | Bool of bool
 | Binop of op * exp * exp
+| Unop of op * exp
 | If of exp * exp * exp
+| Pair of exp * exp
 
 let rec ppExp = function
 | Var id -> id
@@ -23,19 +29,23 @@ let rec ppExp = function
 | Bool true -> "True"
 | Bool false -> "False"
 | Binop (o, l, r) -> ppExp l ^ " " ^ ppOp o ^ " " ^ ppExp r
+| Unop (o, e) -> ppOp o ^ " " ^ ppExp e
 | If (c, t, e) -> "if " ^ ppExp c ^ " " ^ ppExp t ^ " " ^ ppExp e
+| Pair (l, r) -> "(" ^ ppExp l ^ ", " ^ ppExp r ^ ")"
 
 type ty =
 | TyInt
 | TyBool
 | TyFn of ty * ty
 | TyVar of string
+| TyProd of ty * ty
 
 let rec ppTy = function
 | TyInt -> "Int"
 | TyBool -> "Bool"
 | TyFn (t, t') -> ppTy t ^ " ⇒ " ^ ppTy t'
 | TyVar id -> "'" ^ id
+| TyProd (l, r) -> ppTy l ^ " × " ^ ppTy r
 
 let getNum = function
 | Num n -> n

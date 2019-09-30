@@ -25,6 +25,8 @@ let rec substTy replaceThis withThis = function
 | TyVar id -> TyVar id
 | TyFn (l, r) ->
   TyFn (substTy replaceThis withThis l, substTy replaceThis withThis r)
+| TyProd (l, r) ->
+  TyProd (substTy replaceThis withThis l, substTy replaceThis withThis r)
 
 (*
   Goes through the constraints and replaces occurences of the
@@ -61,8 +63,9 @@ let rec u c s = match c with
 | [] -> s
 (* Useless constraint, no info added *)
 | Eq (t, t') :: c when t = t' -> u c s
-(* Two functions must have same param and return type *)
-| Eq (TyFn (t1, t2), TyFn (t3, t4)) :: c ->
+(* Two functions/products must have same param and return type *)
+| Eq (TyFn (t1, t2), TyFn (t3, t4)) :: c
+| Eq (TyProd (t1, t2), TyProd (t3, t4)) :: c ->
   u (Eq (t1, t3) :: Eq (t2, t4) :: c) s
 (*
   e.g. TyVar x ≡ Int

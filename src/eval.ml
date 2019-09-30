@@ -18,9 +18,14 @@ let rec eval = function
 | App (Abs (x, m), n) when isValue n -> eval @@ subst x (eval n) m
 | App (m, n) -> eval @@ App (eval m, eval n)
 | Abs (x, m) -> Abs (x, eval m)
+| Pair (m, n) -> Pair (eval m, eval n)
 | If (c, t, e) -> begin match eval c with
   | Bool true -> eval t
   | Bool false -> eval e
+  end
+| Unop (op, e) -> begin match op, eval e with
+  | Fst, Pair (l, _) -> l
+  | Snd, Pair (_, r) -> r
   end
 | Binop (op, l, r) ->
   match op, eval l, eval r with

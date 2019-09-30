@@ -40,9 +40,23 @@ let rec cg gamma = function
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
   TyInt, c1 @ c2 @ [Eq (t1, TyInt); Eq (t2, TyInt)], a1 @ a2
+| Unop (Fst, e) ->
+  let t1, c1, a1 = cg gamma e in
+  let a = Gensym.gen_str "a" in
+  let b = Gensym.gen_str "b" in
+  TyVar a, c1 @ [Eq (t1, TyProd (TyVar a, TyVar b))], a1 @ [a; b]
+| Unop (Snd, e) ->
+  let t1, c1, a1 = cg gamma e in
+  let a = Gensym.gen_str "a" in
+  let b = Gensym.gen_str "b" in
+  TyVar b, c1 @ [Eq (t1, TyProd (TyVar a, TyVar b))], a1 @ [a; b]
 | If (c, t, e) ->
   let t1, c1, a1 = cg gamma c in
   let t2, c2, a2 = cg gamma t in
   let t3, c3, a3 = cg gamma e in
   let r = Gensym.gen_str "a" in
   TyVar r, c1 @ c2 @ c3 @ [Eq(t1, TyBool); Eq (t2, t3); Eq (t2, TyVar r); Eq (t2, TyVar r)], a1 @ a2 @ [r]
+| Pair (l, r) ->
+  let t1, c1, a1 = cg gamma l in
+  let t2, c2, a2 = cg gamma r in
+  TyProd (t1, t2), c1 @ c2, a1 @ a2

@@ -20,6 +20,7 @@ rule token = parse
   | ')'       { TRPAREN }
   | '+'       { TADD }
   | '-'       { TSUB }
+  | ','       { TCOMMA }
   | "True"    { TBOOL true }
   | "False"   { TBOOL false }
   | "if"      { TIF }
@@ -27,6 +28,8 @@ rule token = parse
   | "then"    { TTHEN }
   | "let"     { TLET }
   | "in"      { TIN }
+  | "fst"     { TFST }
+  | "snd"     { TSND }
   | "="       { TEQ }
   | id as id  { TID id }
   | num as n  { TNUM (int_of_string n) }
