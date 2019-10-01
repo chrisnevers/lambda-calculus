@@ -33,6 +33,7 @@ let rec eval env = function
 | Unop (op, e) -> begin match op, eval env e with
   | Fst, Pair (l, _) -> l
   | Snd, Pair (_, r) -> r
+  | Print, e -> print_endline @@ ppExp e; e
   end
 | Binop (op, l, r) ->
   match op, eval env l, eval env r with

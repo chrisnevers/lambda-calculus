@@ -55,6 +55,7 @@ let rec cg gamma = function
   let a = Gensym.gen_str "a" in
   let b = Gensym.gen_str "b" in
   TyVar b, c1 @ [Eq (t1, TyProd (TyVar a, TyVar b))], a1 @ [a; b]
+| Unop (Print, e) -> cg gamma e
 | If (c, t, e) ->
   let t1, c1, a1 = cg gamma c in
   let t2, c2, a2 = cg gamma t in

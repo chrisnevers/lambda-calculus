@@ -20,22 +20,33 @@ let interp buffer =
   let res = eval Env.empty ast in
   print_endline @@ ppExp res ^ " : " ^ ppTy ty
 
-let rec repl () = begin try
+let rec repl () = begin
   print_string "> ";
   let input = read_line () in
   let buffer = Lexing.from_string input in
-  interp buffer
+  try interp buffer
   with
-  | Error | LexerError -> print_endline "Syntax Error"
   | UnificationError msg -> print_endline msg
   | ConstraintError msg -> print_endline msg
+  | Parser.Error | LexerError ->
+    let pos = Lexing.lexeme_start_p buffer in
+    Printf.eprintf "Syntax Error (Line %d : Col %d): %s\n"
+    pos.pos_lnum pos.pos_cnum (Lexing.lexeme buffer)
   end;
   repl ()
 
 let runFile file =
   let chan = open_in file in
   let buffer = Lexing.from_channel chan in
-  interp buffer;
+  begin try interp buffer
+  with
+  | UnificationError msg -> print_endline msg
+  | ConstraintError msg -> print_endline msg
+  | Parser.Error | LexerError ->
+    let pos = Lexing.lexeme_start_p buffer in
+    Printf.eprintf "Syntax Error (Line %d : Col %d): %s\n"
+    pos.pos_lnum pos.pos_cnum (Lexing.lexeme buffer)
+  end;
   close_in chan
 
 let _ =

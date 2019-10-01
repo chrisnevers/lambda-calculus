@@ -36,8 +36,10 @@ rule token = parse
   | "inr"     { TINR }
   | "match"   { TMATCH }
   | "rec"     { TREC }
+  | "print"   { TPRINT }
   | '|'       { TBAR }
   | '='       { TEQ }
+  | ';'       { TSEMI }
   | '"'       { readString (Buffer.create 17) lexbuf }
   | id as id  { TID id }
   | num as n  { TNUM (int_of_string n) }

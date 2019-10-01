@@ -6,6 +6,7 @@ type op =
 | Fst
 | Snd
 | Equal
+| Print
 
 let ppOp = function
 | Add -> "+"
@@ -15,6 +16,7 @@ let ppOp = function
 | Fst -> "fst"
 | Snd -> "snd"
 | Equal -> "="
+| Print -> "print"
 
 type exp =
 | Var of string

@@ -16,7 +16,7 @@ let printSubs s =
 let rec lookupTy id = function
 | S (l, ty) :: _ when l = id -> ty
 | h :: tl -> lookupTy id tl
-| [] -> error ("Unbound variable: " ^ id)
+| [] -> TyVar id
 
 let rec substTy replaceThis withThis = function
 | TyVar id when id = replaceThis -> withThis

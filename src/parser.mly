@@ -24,17 +24,20 @@
 %token TINL TINR TMATCH TBAR
 %token TMUL TDIV
 %token TREC
+%token TSEMI
+%token TPRINT
 %token TEOF
 
 %left TLET TIN TREC
 %left TMATCH TBAR
+%left TSEMI
 %left TLAMBDA TDOT
 %left TIF TTHEN TELSE
 %nonassoc TCOMMA
 %nonassoc TEQ
 %left TADD TSUB
 %left TMUL TDIV
-%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR
+%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR TPRINT
 %left APP
 
 %start<Ast.exp> program
@@ -56,6 +59,8 @@ exp:
   | exp TMUL exp          { Binop (Mul, $1, $3) }
   | exp TDIV exp          { Binop (Div, $1, $3) }
   | exp TEQ exp           { Binop (Equal, $1, $3) }
+  | exp TSEMI exp         { letToLambda "_" $1 $3 }
+  | TPRINT exp            { Unop (Print, $2) }
   | TFST exp              { Unop (Fst, $2) }
   | TSND exp              { Unop (Snd, $2) }
   | TINL exp              { Inl $2 }
