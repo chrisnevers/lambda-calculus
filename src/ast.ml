@@ -1,14 +1,20 @@
 type op =
 | Add
 | Sub
+| Mul
+| Div
 | Fst
 | Snd
+| Equal
 
 let ppOp = function
 | Add -> "+"
 | Sub -> "-"
+| Mul -> "*"
+| Div -> "÷"
 | Fst -> "fst"
 | Snd -> "snd"
+| Equal -> "="
 
 type exp =
 | Var of string
@@ -23,6 +29,7 @@ type exp =
 | Inl of exp
 | Inr of exp
 | Match of exp * exp * exp
+| Fix of exp
 
 let rec ppExp = function
 | Var id -> id
@@ -33,11 +40,12 @@ let rec ppExp = function
 | Bool false -> "False"
 | Binop (o, l, r) -> ppExp l ^ " " ^ ppOp o ^ " " ^ ppExp r
 | Unop (o, e) -> ppOp o ^ " " ^ ppExp e
-| If (c, t, e) -> "if " ^ ppExp c ^ " " ^ ppExp t ^ " " ^ ppExp e
+| If (c, t, e) -> "if " ^ ppExp c ^ " then " ^ ppExp t ^ " else " ^ ppExp e
 | Pair (l, r) -> "(" ^ ppExp l ^ ", " ^ ppExp r ^ ")"
 | Inl e -> "inl " ^ ppExp e
 | Inr e -> "inr " ^ ppExp e
 | Match (c, l, r) -> "match " ^ ppExp c ^ " | " ^ ppExp l ^ " | " ^ ppExp r
+| Fix e -> "fix " ^ ppExp e
 
 type ty =
 | TyInt
@@ -59,5 +67,9 @@ let getNum = function
 | Num n -> n
 
 let isIntToIntOp = function
-| Add | Sub -> true
+| Add | Sub | Mul | Div -> true
+| _ -> false
+
+let isIntToBoolOp = function
+| Equal -> true
 | _ -> false

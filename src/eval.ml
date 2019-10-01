@@ -18,6 +18,7 @@ let rec subst old rep = function
 | Inr e -> Inr (subst old rep e)
 | Match (c, l, r) -> Match (subst old rep c, subst old rep l, subst old rep r)
 | If (c, t, e) -> If (subst old rep c, subst old rep t, subst old rep e)
+| Fix e -> Fix e
 
 let rec eval = function
 | m when isValue m -> m
@@ -27,6 +28,7 @@ let rec eval = function
 | Pair (m, n) -> Pair (eval m, eval n)
 | Inl e -> Inl (eval e)
 | Inr e -> Inr (eval e)
+| Fix (Abs (x, m)) ->  eval @@ subst x (Fix (Abs (x, m))) m
 | Match (c, l, r) -> begin match eval c with
   | Inl e -> eval @@ App (l, e)
   | Inr e -> eval @@ App (r, e)
@@ -42,4 +44,7 @@ let rec eval = function
 | Binop (op, l, r) ->
   match op, eval l, eval r with
   | Add, Num l, Num r -> Num (l + r)
-  | Sub, Num l, Num r -> Num (l + r)
+  | Sub, Num l, Num r -> Num (l - r)
+  | Mul, Num l, Num r -> Num (l * r)
+  | Div, Num l, Num r -> Num (l / r)
+  | Equal, Num l, Num r -> Bool (l = r)

@@ -20,6 +20,8 @@ rule token = parse
   | ')'       { TRPAREN }
   | '+'       { TADD }
   | '-'       { TSUB }
+  | '*'       { TMUL }
+  | '/'       { TDIV }
   | ','       { TCOMMA }
   | "True"    { TBOOL true }
   | "False"   { TBOOL false }
@@ -33,6 +35,7 @@ rule token = parse
   | "inl"     { TINL }
   | "inr"     { TINR }
   | "match"   { TMATCH }
+  | "rec"     { TREC }
   | '|'       { TBAR }
   | '='       { TEQ }
   | id as id  { TID id }

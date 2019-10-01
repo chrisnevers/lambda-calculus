@@ -40,6 +40,10 @@ let rec cg gamma = function
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
   TyInt, c1 @ c2 @ [Eq (t1, TyInt); Eq (t2, TyInt)], a1 @ a2
+| Binop (op, l, r) when isIntToBoolOp op ->
+  let t1, c1, a1 = cg gamma l in
+  let t2, c2, a2 = cg gamma r in
+  TyBool, c1 @ c2 @ [Eq (t1, TyInt); Eq (t2, TyInt)], a1 @ a2
 | Unop (Fst, e) ->
   let t1, c1, a1 = cg gamma e in
   let a = Gensym.gen_str "a" in
@@ -80,3 +84,7 @@ let rec cg gamma = function
   TyVar v,
   c1 @ c2 @ c3 @ [Eq (t1, TySum (TyVar v1, TyVar v2)); Eq (t2, TyFn (TyVar v1, TyVar v)); Eq (t3, TyFn (TyVar v2, TyVar v))],
   a1 @ a2 @ a3 @ [v; v1; v2]
+| Fix e ->
+  let t1, c1, a1 = cg gamma e in
+  let a = Gensym.gen_str "b" in
+  TyVar a, c1 @ [Eq (t1, TyFn (TyVar a, TyVar a))], a1 @ [a]
