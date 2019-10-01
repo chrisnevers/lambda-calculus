@@ -38,7 +38,22 @@ rule token = parse
   | "rec"     { TREC }
   | '|'       { TBAR }
   | '='       { TEQ }
+  | '"'       { readString (Buffer.create 17) lexbuf }
   | id as id  { TID id }
   | num as n  { TNUM (int_of_string n) }
   | eof       { TEOF }
+  | _         { raise LexerError }
+
+and readString buf = parse
+  | '"'       { TSTR (Buffer.contents buf) }
+  | "\\/"     { Buffer.add_char buf '/'; readString buf lexbuf }
+  | "\\\\"    { Buffer.add_char buf '\\'; readString buf lexbuf }
+  | "\\b"     { Buffer.add_char buf '\b'; readString buf lexbuf }
+  | "\\f"     { Buffer.add_char buf '\012'; readString buf lexbuf }
+  | "\\n"     { Buffer.add_char buf '\n'; readString buf lexbuf }
+  | "\\r"     { Buffer.add_char buf '\r'; readString buf lexbuf }
+  | "\\t"     { Buffer.add_char buf '\t'; readString buf lexbuf }
+  | [^ '"''\\']+ as content
+    { Buffer.add_string buf content; readString buf lexbuf }
+  | eof       { raise LexerError }
   | _         { raise LexerError }

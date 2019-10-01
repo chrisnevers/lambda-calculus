@@ -19,6 +19,7 @@
 %token TLET TEQ TIN
 %token TLPAREN TRPAREN
 %token TCOMMA
+%token<string> TSTR
 %token TFST TSND
 %token TINL TINR TMATCH TBAR
 %token TMUL TDIV
@@ -33,7 +34,7 @@
 %nonassoc TEQ
 %left TADD TSUB
 %left TMUL TDIV
-%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR
+%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR
 %left APP
 
 %start<Ast.exp> program
@@ -47,6 +48,7 @@ exp:
   | TID                   { Var $1 }
   | TNUM                  { Num $1 }
   | TBOOL                 { Bool $1 }
+  | TSTR                  { Str $1 }
   | TLAMBDA TID TDOT exp  { Abs ($2, $4) }
   | TLPAREN exp TRPAREN   { $2 }
   | exp TADD exp          { Binop (Add, $1, $3) }

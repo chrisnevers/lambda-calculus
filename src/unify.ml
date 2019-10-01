@@ -21,6 +21,7 @@ let rec lookupTy id = function
 let rec substTy replaceThis withThis = function
 | TyVar id when id = replaceThis -> withThis
 | TyInt -> TyInt
+| TyStr -> TyStr
 | TyBool -> TyBool
 | TyVar id -> TyVar id
 | TyFn (l, r) ->

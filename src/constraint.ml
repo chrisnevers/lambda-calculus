@@ -34,6 +34,7 @@ let rec cg gamma = function
   let r = Gensym.gen_str "a" in
   TyVar r, c1 @ c2 @ [Eq (t1, TyFn (d, TyVar r))], a1 @ a2 @ [r]
 | Num _ -> TyInt, [], []
+| Str _ -> TyStr, [], []
 | Bool _ -> TyBool, [], []
 | Var id -> lookup (TyVar id) gamma, [], []
 | Binop (op, l, r) when isIntToIntOp op ->
