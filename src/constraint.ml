@@ -38,6 +38,11 @@ let rec cg gamma = function
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
   TyBool, c1 @ c2 @ [Eq (t1, TyInt); Eq (t2, TyInt)], a1 @ a2
+| Binop (Cons, l, r) ->
+  let t1, c1, a1 = cg gamma l in
+  let t2, c2, a2 = cg gamma r in
+  let ty = TySum (t1, TyUnit) in
+  ty, c1 @ c2 @ [Eq (t2, ty)], a1 @ a2
 | Unop (Fst, e) ->
   let t1, c1, a1 = cg gamma e in
   let a = Gensym.gen_str "a" in

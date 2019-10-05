@@ -7,6 +7,10 @@
 
   let letToLambda id e1 e2 =
     App (Abs (id, e2), e1)
+
+  let rec mkCons = function
+  | h :: [] -> Binop (Cons, h, Inr Unit)
+  | h :: t  -> Binop (Cons, h, mkCons t)
 %}
 
 %token<string> TID
@@ -27,6 +31,7 @@
 %token TSEMI
 %token TPRINT
 %token TUNIT
+%token TLBRACKET TRBRACKET
 %token TEOF
 
 %left TLET TIN TREC
@@ -38,6 +43,7 @@
 %nonassoc TEQ
 %left TADD TSUB
 %left TMUL TDIV
+%nonassoc TLBRACKET
 %nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR TPRINT TUNIT
 %left APP
 
@@ -77,4 +83,7 @@ exp:
   | exp exp %prec APP    { App ($1, $2) }
   | TLPAREN exp TCOMMA separated_list(TCOMMA, exp) TRPAREN {
       match $4 with [] -> $2 | es -> Pair ($2, curryPair es)
+    }
+  | TLBRACKET separated_list(TCOMMA, exp) TRBRACKET {
+      mkCons $2
     }

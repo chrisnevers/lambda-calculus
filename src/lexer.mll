@@ -38,6 +38,8 @@ rule token = parse
   | "match"   { TMATCH }
   | "rec"     { TREC }
   | "print"   { TPRINT }
+  | "["       { TLBRACKET }
+  | "]"       { TRBRACKET }
   | '|'       { TBAR }
   | '='       { TEQ }
   | ';'       { TSEMI }

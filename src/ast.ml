@@ -7,6 +7,7 @@ type op =
 | Snd
 | Equal
 | Print
+| Cons
 
 let ppOp = function
 | Add -> "+"
@@ -17,6 +18,7 @@ let ppOp = function
 | Snd -> "snd"
 | Equal -> "="
 | Print -> "print"
+| Cons -> "Cons"
 
 type exp =
 | Var of string
@@ -35,6 +37,7 @@ type exp =
 | Str of string
 | Let of string * exp * exp
 | Unit
+| List of exp list
 
 let rec ppExp = function
 | Var id -> id
@@ -54,6 +57,7 @@ let rec ppExp = function
 | Str s -> s
 | Let (id, i, b) -> "let " ^ id ^ " = " ^ ppExp i ^ " " ^ ppExp b
 | Unit -> "()"
+| List es -> "{" ^ String.concat ", " (List.map ppExp es) ^ "]"
 
 type ty =
 | TyInt
