@@ -31,7 +31,7 @@ let parseLet () =
   let app = App (Var "x", Var "y") in
   let absX = Abs ("x", Var "x") in
   let absY = Abs ("y", Var "y") in
-  let expected = App (Abs ("x", App (Abs("y", app), absY)), absX) in
+  let expected = Let ("x", absX, Let ("y", absY, App (Var "x", Var "y"))) in
   assert_equal ast expected
 
 let parseNum () =

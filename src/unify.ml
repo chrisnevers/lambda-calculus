@@ -1,35 +1,5 @@
-open Constraint
+open InferHelper
 open Ast
-
-exception UnificationError of string
-let error msg = raise @@ UnificationError ("Typecheck Error: " ^ msg)
-
-type s = S of string * ty
-
-(* Solution pretty printers *)
-let ppS = function S (l, r) -> l ^ " : " ^ ppTy r
-
-let printSubs s =
-  print_endline @@ "Solution: [" ^ String.concat ", "
-  (List.map ppS s) ^ "]"
-
-let rec lookupTy id = function
-| S (l, ty) :: _ when l = id -> ty
-| h :: tl -> lookupTy id tl
-| [] -> TyVar id
-
-let rec substTy replaceThis withThis = function
-| TyVar id when id = replaceThis -> withThis
-| TyInt -> TyInt
-| TyStr -> TyStr
-| TyBool -> TyBool
-| TyVar id -> TyVar id
-| TyFn (l, r) ->
-  TyFn (substTy replaceThis withThis l, substTy replaceThis withThis r)
-| TyProd (l, r) ->
-  TyProd (substTy replaceThis withThis l, substTy replaceThis withThis r)
-| TySum (l, r) ->
-  TySum (substTy replaceThis withThis l, substTy replaceThis withThis r)
 
 (*
   Goes through the constraints and replaces occurences of the
@@ -83,4 +53,5 @@ let rec u c s = match c with
 *)
 | Eq (TyVar a, t) :: c | Eq (t, TyVar a) :: c ->
   u (replaceCons a t c) (replaceSol a t s @ [S (a, t)])
-| h :: _ -> error ("could not unify " ^ ppC h)
+| h :: _ -> uError ("could not unify " ^ ppC h)
+

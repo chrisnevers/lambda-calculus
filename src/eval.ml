@@ -17,6 +17,9 @@ let rec eval env = function
 | App (m, n) -> eval env @@ App (eval env m, eval env n)
 | Abs (x, m) -> Abs (x, eval env m)
 | Pair (m, n) -> Pair (eval env m, eval env n)
+| Let (id, m, n) ->
+  let env' = Env.add id (eval env m) env in
+  eval env' n
 | Inl e -> Inl (eval env e)
 | Inr e -> Inr (eval env e)
 | Fix (Abs (x, m)) ->
@@ -35,10 +38,11 @@ let rec eval env = function
   | Snd, Pair (_, r) -> r
   | Print, e -> print_endline @@ ppExp e; e
   end
-| Binop (op, l, r) ->
+| Binop (op, l, r) -> begin
   match op, eval env l, eval env r with
   | Add, Num l, Num r -> Num (l + r)
   | Sub, Num l, Num r -> Num (l - r)
   | Mul, Num l, Num r -> Num (l * r)
   | Div, Num l, Num r -> Num (l / r)
   | Equal, Num l, Num r -> Bool (l = r)
+end

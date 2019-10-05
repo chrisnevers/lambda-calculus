@@ -66,10 +66,10 @@ exp:
   | TINL exp              { Inl $2 }
   | TINR exp              { Inr $2 }
   | TMATCH exp TBAR exp TBAR exp { Match ($2, $4, $6) }
-  | TLET TID TEQ exp TIN exp    { letToLambda $2 $4 $6 }
+  | TLET TID TEQ exp TIN exp    { Let($2, $4, $6) }
   | TREC TID TEQ exp TIN exp    {
     let x = $2 in
-    letToLambda x (Fix (Abs (x, $4))) $6
+    Let(x, Fix (Abs (x, $4)), $6)
   }
   | TIF exp TTHEN exp TELSE exp { If ($2, $4, $6) }
   | exp exp %prec APP    { App ($1, $2) }

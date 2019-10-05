@@ -2,4 +2,7 @@ let id =
   let x = \ x . x in
   x
 in
-id 5
+print (id True);
+print (id 5);
+id
+

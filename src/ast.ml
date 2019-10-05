@@ -33,6 +33,7 @@ type exp =
 | Match of exp * exp * exp
 | Fix of exp
 | Str of string
+| Let of string * exp * exp
 
 let rec ppExp = function
 | Var id -> id
@@ -50,6 +51,7 @@ let rec ppExp = function
 | Match (c, l, r) -> "match " ^ ppExp c ^ " | " ^ ppExp l ^ " | " ^ ppExp r
 | Fix e -> "fix " ^ ppExp e
 | Str s -> s
+| Let (id, i, b) -> "let " ^ id ^ " = " ^ ppExp i ^ " " ^ ppExp b
 
 type ty =
 | TyInt
@@ -59,6 +61,7 @@ type ty =
 | TyProd of ty * ty
 | TySum of ty * ty
 | TyStr
+| TyForAll of string * ty
 
 let rec ppTy = function
 | TyInt -> "Int"
@@ -68,6 +71,7 @@ let rec ppTy = function
 | TyProd (l, r) -> "(" ^ ppTy l ^ " × " ^ ppTy r ^ ")"
 | TySum (l, r) -> "(" ^ ppTy l ^ " + " ^ ppTy r ^ ")"
 | TyStr -> "String"
+| TyForAll (a, t) -> "∀ " ^ a ^ " . " ^ ppTy t
 
 let getNum = function
 | Num n -> n
