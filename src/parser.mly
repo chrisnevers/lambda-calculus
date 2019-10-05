@@ -9,6 +9,7 @@
     App (Abs (id, e2), e1)
 
   let rec mkCons = function
+  | [] -> Nil
   | h :: [] -> Binop (Cons, h, Inr Unit)
   | h :: t  -> Binop (Cons, h, mkCons t)
 %}

@@ -3,7 +3,7 @@ open Ast
 module Env = Map.Make(String)
 
 let rec isValue = function
-| Num _ | Bool _ | Abs _ | Str _ | Unit _ -> true
+| Num _ | Bool _ | Abs _ | Str _ | Unit _ | Nil -> true
 | Pair (l, r) when isValue l && isValue r -> true
 | Inl v when isValue v -> true
 | Inr v when isValue v -> true

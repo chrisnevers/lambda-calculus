@@ -38,6 +38,7 @@ type exp =
 | Let of string * exp * exp
 | Unit
 | List of exp list
+| Nil
 
 let rec ppExp = function
 | Var id -> id
@@ -57,7 +58,8 @@ let rec ppExp = function
 | Str s -> s
 | Let (id, i, b) -> "let " ^ id ^ " = " ^ ppExp i ^ " " ^ ppExp b
 | Unit -> "()"
-| List es -> "{" ^ String.concat ", " (List.map ppExp es) ^ "]"
+| List es -> "[" ^ String.concat ", " (List.map ppExp es) ^ "]"
+| Nil -> "[]"
 
 type ty =
 | TyInt
