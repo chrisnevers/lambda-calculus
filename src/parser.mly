@@ -18,7 +18,7 @@
 %token<int> TNUM
 %token<bool> TBOOL
 %token TLAMBDA
-%token TDOT
+%token TDOT TCOLON
 %token TADD TSUB
 %token TIF TELSE TTHEN
 %token TLET TEQ TIN
@@ -44,6 +44,7 @@
 %nonassoc TEQ
 %left TADD TSUB
 %left TMUL TDIV
+%right TCOLON
 %nonassoc TLBRACKET
 %nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR TPRINT TUNIT
 %left APP
@@ -74,6 +75,7 @@ exp:
   | TSND exp              { Unop (Snd, $2) }
   | TINL exp              { Inl $2 }
   | TINR exp              { Inr $2 }
+  | exp TCOLON exp        { Binop (Cons, $1, $3) }
   | TMATCH exp TBAR exp TBAR exp { Match ($2, $4, $6) }
   | TLET exp TEQ exp TIN exp    { Let($2, $4, $6) }
   | TREC exp TEQ exp TIN exp    {

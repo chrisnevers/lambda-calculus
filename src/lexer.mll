@@ -24,6 +24,7 @@ rule token = parse
   | '*'       { TMUL }
   | '/'       { TDIV }
   | ','       { TCOMMA }
+  | ':'       { TCOLON }
   | "True"    { TBOOL true }
   | "False"   { TBOOL false }
   | "if"      { TIF }
