@@ -1,6 +1,11 @@
 open Ast
 
+exception EvalError of string
+let error msg = raise (EvalError msg)
+
 module Env = Map.Make(String)
+
+let ppEnv e = Env.iter (fun k v -> print_string @@ k ^ " " ^ ppExp v ^ ", ") e
 
 let rec isValue = function
 | Num _ | Bool _ | Abs _ | Str _ | Unit _ | Nil -> true
@@ -10,42 +15,68 @@ let rec isValue = function
 | _ -> false
 
 let rec eval env = function
-| m when isValue m -> m
-| Var id -> Env.find id env
+| m when isValue m -> env, m
+| Var id -> begin match Env.find_opt id env with
+  | Some e -> env, e
+  | None -> error @@ id ^ " not bound."
+  end
 | App (Abs (x, m), n) when isValue n ->
-  let env' = Env.add x (eval env n) env in
+  let env', n' = eval env n in
+  let env' = Env.add x n' env' in
   eval env' m
-| App (m, n) -> eval env @@ App (eval env m, eval env n)
-| Abs (x, m) -> Abs (x, eval env m)
-| Pair (m, n) -> Pair (eval env m, eval env n)
+| App (m, n) ->
+  let env', n' = eval env n in
+  let env', m' = eval env' m in
+  eval env' @@ App (m', n')
+| Abs (x, m) ->
+  let env', m' = eval env m in
+  env', Abs (x, m')
+| Pair (m, n) ->
+  let env', m' = eval env m in
+  let env', n' = eval env' n in
+  env', Pair (m', n')
 | Let (id, m, n) ->
-  let env' = Env.add id (eval env m) env in
+  let env', m' = eval env m in
+  let env' = Env.add id m' env' in
   eval env' n
-| Inl e -> Inl (eval env e)
-| Inr e -> Inr (eval env e)
+| Inl e ->
+  let env', e' = eval env e in
+  env', Inl e
+| Inr e ->
+  let env', e' = eval env e in
+  env', Inr e
 | Fix (Abs (x, m)) ->
   let env' = Env.add x (Fix (Abs (x, m))) env in
   eval env' m
-| Match (c, l, r) -> begin match eval env c with
+| Match (c, l, r) ->
+  let _, c' = eval env c in
+  begin match c' with
   | Inl e -> eval env @@ App (l, e)
   | Inr e -> eval env @@ App (r, e)
   end
-| If (c, t, e) -> begin match eval env c with
-  | Bool true -> eval env t
+| If (c, t, e) ->
+  let _, c' = eval env c in
+  begin match c' with
+  | Bool true  -> eval env t
   | Bool false -> eval env e
   end
-| Unop (op, e) -> begin match op, eval env e with
-  | Fst, Pair (l, _) -> l
-  | Snd, Pair (_, r) -> r
-  | Print, e -> print_endline @@ ppExp e; e
+| Unop (op, e) ->
+  let _, e' = eval env e in
+  begin match op, e' with
+  | Fst, Pair (l, _) -> env, l
+  | Snd, Pair (_, r) -> env, r
+  | Print, e -> print_endline @@ ppExp e; env, e
   end
-| Binop (op, l, r) -> begin
-  match op, eval env l, eval env r with
-  | Add, Num l, Num r -> Num (l + r)
-  | Sub, Num l, Num r -> Num (l - r)
-  | Mul, Num l, Num r -> Num (l * r)
-  | Div, Num l, Num r -> Num (l / r)
-  | Equal, Num l, Num r -> Bool (l = r)
-  | Cons, h, Nil -> List [h]
-  | Cons, h, List t -> List (h :: t)
-end
+| Binop (op, l, r) ->
+  let _, l = eval env l in
+  let _, r = eval env r in
+  begin
+    match op, l, r with
+    | Add, Num l, Num r -> env, Num (l + r)
+    | Sub, Num l, Num r -> env, Num (l - r)
+    | Mul, Num l, Num r -> env, Num (l * r)
+    | Div, Num l, Num r -> env, Num (l / r)
+    | Equal, l, r -> env, Bool (l = r)
+    | Cons, h, Nil -> env, List [h]
+    | Cons, h, List t -> env, List (h :: t)
+  end

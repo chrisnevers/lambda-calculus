@@ -11,7 +11,7 @@ let interp buffer =
   let ty, constraints, _ = cg [] ast in
   let subs = u constraints [] in
   let ty = getType subs ty in
-  let res = eval Env.empty ast in
+  let _, res = eval Env.empty ast in
   print_endline @@ ppExp res ^ " : " ^ ppTy ty
 
 let rec repl () = begin

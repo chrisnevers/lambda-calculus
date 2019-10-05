@@ -44,6 +44,14 @@ let parseBool () =
   let ast = parseString "False" in
   assert_equal ast (Bool false)
 
+let parseList () =
+  let ast = parseString "[1, 2]" in
+  assert_equal ast (Binop (Cons, Num 1, Binop (Cons, Num 2, Nil)))
+
+let parseNil () =
+  let ast = parseString "[]" in
+  assert_equal ast Nil
+
 let suite =
   "Tests" >:::
   [
@@ -55,6 +63,8 @@ let suite =
     "parseLet" >:: parseLet;
     "parseNum" >:: parseNum;
     "parseBool" >:: parseBool;
+    "parseList" >:: parseList;
+    "parseNil"  >:: parseNil;
   ]
 
 let parserTests () = run_test_tt_main suite

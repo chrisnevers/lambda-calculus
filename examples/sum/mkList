@@ -1,0 +1,2 @@
+let mkList = \ x . \ y . [x, y] in
+mkList 1 2
