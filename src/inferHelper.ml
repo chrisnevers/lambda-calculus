@@ -49,7 +49,7 @@ let cError msg = raise @@ ConstraintError ("Typecheck Error: " ^ msg)
 type c = Eq of ty * ty
 
 (* Constraint pretty printers *)
-let ppC = function Eq (t, t') -> ppTy t ^ " → " ^ ppTy t'
+let ppC = function Eq (t, t') -> ppTy t ^ " ≡ " ^ ppTy t'
 
 let printCons c =
   print_endline @@ "Constraints: [" ^ String.concat ", "
@@ -79,7 +79,11 @@ let rec p t = function
   p (TyForAll (a, t)) x
 | a :: x -> p t x
 
-let monoTy ty subTy =
-  match ty with
-  | TyForAll (id, dt) -> substTy id subTy dt
+let rec monoTy ty subTy =
+  match ty, subTy with
+  | TyForAll (id, TyForAll (id2, dt)), TyProd (l, TyProd (l2, r)) ->
+    monoTy (substTy id2 l (substTy id l2 dt)) r
+  | TyForAll (id, TyForAll (id2, dt)), TyProd (l, r) ->
+    substTy id2 l (substTy id r dt)
+  | TyForAll (id, dt), subTy -> substTy id subTy dt
   | _ -> ty

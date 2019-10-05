@@ -16,6 +16,7 @@ rule token = parse
   | "λ"       { TLAMBDA }
   | '\\'      { TLAMBDA }
   | '.'       { TDOT }
+  | "()"      { TUNIT }
   | '('       { TLPAREN }
   | ')'       { TRPAREN }
   | '+'       { TADD }

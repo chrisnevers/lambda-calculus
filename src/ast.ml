@@ -34,6 +34,7 @@ type exp =
 | Fix of exp
 | Str of string
 | Let of string * exp * exp
+| Unit
 
 let rec ppExp = function
 | Var id -> id
@@ -52,6 +53,7 @@ let rec ppExp = function
 | Fix e -> "fix " ^ ppExp e
 | Str s -> s
 | Let (id, i, b) -> "let " ^ id ^ " = " ^ ppExp i ^ " " ^ ppExp b
+| Unit -> "()"
 
 type ty =
 | TyInt
@@ -62,6 +64,7 @@ type ty =
 | TySum of ty * ty
 | TyStr
 | TyForAll of string * ty
+| TyUnit
 
 let rec ppTy = function
 | TyInt -> "Int"
@@ -72,6 +75,7 @@ let rec ppTy = function
 | TySum (l, r) -> "(" ^ ppTy l ^ " + " ^ ppTy r ^ ")"
 | TyStr -> "String"
 | TyForAll (a, t) -> "∀ " ^ a ^ " . " ^ ppTy t
+| TyUnit -> "()"
 
 let getNum = function
 | Num n -> n

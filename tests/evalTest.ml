@@ -27,6 +27,10 @@ let evalAdd () =
   let ast = eval Env.empty @@ parseString "let x = \\ x . x + 5 in x 4" in
   assert_equal ast (Num 9)
 
+let evalSwap () =
+  let ast = eval Env.empty @@ parseString "let swap = \\ p . (fst (snd p), fst p) in swap (1, 2, 3)" in
+  assert_equal ast (Pair (Num 2, Num 1))
+
 let suite =
   "Tests" >:::
   [
@@ -36,6 +40,7 @@ let suite =
     "evalApp"   >:: evalApp;
     "evalLet"   >:: evalLet;
     "evalAdd"   >:: evalAdd;
+    "evalSwap"  >:: evalSwap;
   ]
 
 let evalTests () = run_test_tt_main suite

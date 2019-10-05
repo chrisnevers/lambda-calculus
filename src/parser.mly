@@ -26,6 +26,7 @@
 %token TREC
 %token TSEMI
 %token TPRINT
+%token TUNIT
 %token TEOF
 
 %left TLET TIN TREC
@@ -37,7 +38,7 @@
 %nonassoc TEQ
 %left TADD TSUB
 %left TMUL TDIV
-%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR TPRINT
+%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR TPRINT TUNIT
 %left APP
 
 %start<Ast.exp> program
@@ -49,6 +50,7 @@ program:
 
 exp:
   | TID                   { Var $1 }
+  | TUNIT                 { Unit }
   | TNUM                  { Num $1 }
   | TBOOL                 { Bool $1 }
   | TSTR                  { Str $1 }
