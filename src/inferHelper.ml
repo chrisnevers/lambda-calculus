@@ -35,6 +35,7 @@ let rec substTy replaceThis withThis = function
 | TyBool -> TyBool
 | TyVar id -> TyVar id
 | TyUnit -> TyUnit
+| TyNil -> TyNil
 | TyFn (l, r) ->
   TyFn (substTy replaceThis withThis l, substTy replaceThis withThis r)
 | TyProd (l, r) ->

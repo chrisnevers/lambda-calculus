@@ -46,6 +46,6 @@ let rec eval env = function
   | Mul, Num l, Num r -> Num (l * r)
   | Div, Num l, Num r -> Num (l / r)
   | Equal, Num l, Num r -> Bool (l = r)
-  | Cons, h, Inr Unit -> List [h]
+  | Cons, h, Nil -> List [h]
   | Cons, h, List t -> List (h :: t)
 end

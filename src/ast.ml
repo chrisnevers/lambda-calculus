@@ -71,6 +71,7 @@ type ty =
 | TyStr
 | TyForAll of string * ty
 | TyUnit
+| TyNil
 
 let rec ppTy = function
 | TyInt -> "Int"
@@ -78,10 +79,12 @@ let rec ppTy = function
 | TyFn (t, t') -> ppTy t ^ " ⇒ " ^ ppTy t'
 | TyVar id -> "'" ^ id
 | TyProd (l, r) -> "(" ^ ppTy l ^ " × " ^ ppTy r ^ ")"
+| TySum (l, TyNil) -> "[" ^ ppTy l ^ "]"
 | TySum (l, r) -> "(" ^ ppTy l ^ " + " ^ ppTy r ^ ")"
 | TyStr -> "String"
 | TyForAll (a, t) -> "∀ " ^ a ^ " . " ^ ppTy t
 | TyUnit -> "()"
+| TyNil -> "[]"
 
 let getNum = function
 | Num n -> n

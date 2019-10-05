@@ -29,7 +29,7 @@ let rec cg gamma = function
 | Str _ -> TyStr, [], []
 | Bool _ -> TyBool, [], []
 | Unit _ -> TyUnit, [], []
-| Nil -> TySum (TyVar "a", TyUnit), [], []
+| Nil -> TySum (TyVar "a", TyNil), [], []
 | Var id -> lookup (TyVar id) gamma, [], []
 | Binop (op, l, r) when isIntToIntOp op ->
   let t1, c1, a1 = cg gamma l in
@@ -42,7 +42,7 @@ let rec cg gamma = function
 | Binop (Cons, l, r) ->
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
-  let ty = TySum (t1, TyUnit) in
+  let ty = TySum (t1, TyNil) in
   ty, c1 @ c2 @ [Eq (t2, ty)], a1 @ a2
 | Unop (Fst, e) ->
   let t1, c1, a1 = cg gamma e in

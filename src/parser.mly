@@ -10,7 +10,7 @@
 
   let rec mkCons = function
   | [] -> Nil
-  | h :: [] -> Binop (Cons, h, Inr Unit)
+  | h :: [] -> Binop (Cons, h, Nil)
   | h :: t  -> Binop (Cons, h, mkCons t)
 %}
 
