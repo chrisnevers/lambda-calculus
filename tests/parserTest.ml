@@ -13,12 +13,12 @@ let parseIdAscii () =
 
 let parseAbsUnicode () =
   let ast = parseString "λ x . x y" in
-  let expected = Abs ("x", App (Var "x", Var "y")) in
+  let expected = Abs (Var "x", App (Var "x", Var "y")) in
   assert_equal ast expected
 
 let parseAbsAscii () =
   let ast = parseString "\\ x . x y" in
-  let expected = Abs ("x", App (Var "x", Var "y")) in
+  let expected = Abs (Var "x", App (Var "x", Var "y")) in
   assert_equal ast expected
 
 let parseApp () =
@@ -29,9 +29,9 @@ let parseApp () =
 let parseLet () =
   let ast = parseString "let x = \\ x . x in let y = \\ y . y in x y" in
   let app = App (Var "x", Var "y") in
-  let absX = Abs ("x", Var "x") in
-  let absY = Abs ("y", Var "y") in
-  let expected = Let ("x", absX, Let ("y", absY, App (Var "x", Var "y"))) in
+  let absX = Abs (Var "x", Var "x") in
+  let absY = Abs (Var "y", Var "y") in
+  let expected = Let (Var "x", absX, Let (Var "y", absY, App (Var "x", Var "y"))) in
   assert_equal ast expected
 
 let parseNum () =

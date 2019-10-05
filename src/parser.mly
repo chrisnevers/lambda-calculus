@@ -61,22 +61,22 @@ exp:
   | TNUM                  { Num $1 }
   | TBOOL                 { Bool $1 }
   | TSTR                  { Str $1 }
-  | TLAMBDA TID TDOT exp  { Abs ($2, $4) }
+  | TLAMBDA exp TDOT exp  { Abs ($2, $4) }
   | TLPAREN exp TRPAREN   { $2 }
   | exp TADD exp          { Binop (Add, $1, $3) }
   | exp TSUB exp          { Binop (Sub, $1, $3) }
   | exp TMUL exp          { Binop (Mul, $1, $3) }
   | exp TDIV exp          { Binop (Div, $1, $3) }
   | exp TEQ exp           { Binop (Equal, $1, $3) }
-  | exp TSEMI exp         { letToLambda "_" $1 $3 }
+  | exp TSEMI exp         { letToLambda (Var "_") $1 $3 }
   | TPRINT exp            { Unop (Print, $2) }
   | TFST exp              { Unop (Fst, $2) }
   | TSND exp              { Unop (Snd, $2) }
   | TINL exp              { Inl $2 }
   | TINR exp              { Inr $2 }
   | TMATCH exp TBAR exp TBAR exp { Match ($2, $4, $6) }
-  | TLET TID TEQ exp TIN exp    { Let($2, $4, $6) }
-  | TREC TID TEQ exp TIN exp    {
+  | TLET exp TEQ exp TIN exp    { Let($2, $4, $6) }
+  | TREC exp TEQ exp TIN exp    {
     let x = $2 in
     Let(x, Fix (Abs (x, $4)), $6)
   }

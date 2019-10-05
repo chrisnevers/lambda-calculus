@@ -5,13 +5,13 @@ open Unify
 
 (* Generate type constraints *)
 let rec cg gamma = function
-| Abs (id, m) ->
+| Abs (Var id, m) ->
   let freshVar = Gensym.gen_str "a" in
   let freshTy = TyVar freshVar in
   let gamma' = Eq (TyVar id, freshTy) :: gamma in
   let mTy, mCon, mVar = cg gamma' m in
   TyFn (freshTy, mTy), mCon, mVar @ [freshVar]
-| Let (id, m, n) ->
+| Let (Var id, m, n) ->
   let t, c1, a1 = cg gamma m in
   let a = Gensym.gen_str "a" in
   let subs = u (c1 @ [Eq (TyVar a, t)]) [] in

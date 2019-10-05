@@ -22,7 +22,7 @@ let ppOp = function
 
 type exp =
 | Var of string
-| Abs of string * exp
+| Abs of exp * exp
 | App of exp * exp
 | Num of int
 | Bool of bool
@@ -35,14 +35,14 @@ type exp =
 | Match of exp * exp * exp
 | Fix of exp
 | Str of string
-| Let of string * exp * exp
+| Let of exp * exp * exp
 | Unit
 | List of exp list
 | Nil
 
 let rec ppExp = function
 | Var id -> id
-| Abs (id, e) -> "(λ" ^ id ^ "." ^ ppExp e ^ ")"
+| Abs (id, e) -> "(λ" ^ ppExp id ^ "." ^ ppExp e ^ ")"
 | App (e, e') -> "[" ^ ppExp e ^ " " ^ ppExp e' ^ "]"
 | Num i -> string_of_int i
 | Bool true -> "True"
@@ -56,7 +56,7 @@ let rec ppExp = function
 | Match (c, l, r) -> "match " ^ ppExp c ^ " | " ^ ppExp l ^ " | " ^ ppExp r
 | Fix e -> "fix " ^ ppExp e
 | Str s -> s
-| Let (id, i, b) -> "let " ^ id ^ " = " ^ ppExp i ^ " " ^ ppExp b
+| Let (id, i, b) -> "let " ^ ppExp id ^ " = " ^ ppExp i ^ " " ^ ppExp b
 | Unit -> "()"
 | List es -> "[" ^ String.concat ", " (List.map ppExp es) ^ "]"
 | Nil -> "[]"

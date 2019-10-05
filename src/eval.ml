@@ -20,7 +20,7 @@ let rec eval env = function
   | Some e -> env, e
   | None -> error @@ id ^ " not bound."
   end
-| App (Abs (x, m), n) when isValue n ->
+| App (Abs (Var x, m), n) when isValue n ->
   let env', n' = eval env n in
   let env' = Env.add x n' env' in
   eval env' m
@@ -35,7 +35,7 @@ let rec eval env = function
   let env', m' = eval env m in
   let env', n' = eval env' n in
   env', Pair (m', n')
-| Let (id, m, n) ->
+| Let (Var id, m, n) ->
   let env', m' = eval env m in
   let env' = Env.add id m' env' in
   eval env' n
@@ -45,8 +45,8 @@ let rec eval env = function
 | Inr e ->
   let env', e' = eval env e in
   env', Inr e
-| Fix (Abs (x, m)) ->
-  let env' = Env.add x (Fix (Abs (x, m))) env in
+| Fix (Abs (Var x, m)) ->
+  let env' = Env.add x (Fix (Abs (Var x, m))) env in
   eval env' m
 | Match (c, l, r) ->
   let _, c' = eval env c in
