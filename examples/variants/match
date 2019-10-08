@@ -1,8 +1,0 @@
-let cond = match inl (3 + 5)
-          | \ x . True
-          | \ y . False
-in
-if cond then
-  1
-else
-  0

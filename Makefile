@@ -15,5 +15,8 @@ debug:
 test:
 	ocamlbuild ${TEST_FLAGS} tests/test.native --
 
+ex:
+	ocamlbuild ${TEST_FLAGS} tests/exampleTest.native --
+
 clean:
 	ocamlbuild -clean
