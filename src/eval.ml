@@ -16,7 +16,7 @@ let rec isValue = function
 | _ -> false
 
 let rec eval env = function
-| Nil -> List []
+| Nil -> env, List []
 | m when isValue m -> env, m
 | Var id -> begin match Env.find_opt id env with
   | Some e -> env, e
@@ -87,3 +87,7 @@ let rec eval env = function
     | Cons, h, List t -> env, List (h :: t)
   end
 | Err msg -> error msg
+| CatchWith (e, h) ->
+  try eval env e
+  with
+  | EvalError _ -> eval env h

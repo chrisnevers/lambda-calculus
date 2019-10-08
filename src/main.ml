@@ -10,7 +10,6 @@ open Match2
 let interp buffer =
   let ast = Parser.program token buffer in
   let ast = pm ast in
-  print_endline @@ ppExp ast;
   let ty, constraints, _ = cg [] ast in
   let subs = u constraints [] in
   let ty = getType subs ty in
@@ -25,6 +24,7 @@ let rec repl () = begin
   with
   | UnificationError msg -> print_endline msg
   | ConstraintError msg -> print_endline msg
+  | EvalError msg -> print_endline msg
   | Parser.Error | LexerError ->
     let pos = Lexing.lexeme_start_p buffer in
     Printf.eprintf "Syntax Error (Line %d : Col %d): %s\n"
@@ -39,6 +39,7 @@ let runFile file =
   with
   | UnificationError msg -> print_endline msg
   | ConstraintError msg -> print_endline msg
+  | EvalError msg -> print_endline msg
   | Parser.Error | LexerError ->
     let pos = Lexing.lexeme_start_p buffer in
     Printf.eprintf "Syntax Error (Line %d : Col %d): %s\n"

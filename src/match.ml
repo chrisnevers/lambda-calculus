@@ -177,9 +177,7 @@ let rec getRules = function
 | Rule (Var id, e) :: tl -> (PVar id, e) :: getRules tl
 | Rule (Binop (Cons, l, r), e) :: tl ->
   let lCon = getCon l in
-  print_endline @@ "LCon: " ^ ppPat lCon;
   let rCon = getCon r in
-  print_endline @@ "RCon: " ^ ppPat rCon;
   (PCon ({ name="Cons"; arity=2; span=2; }, [lCon; rCon]), e) :: getRules tl
 
 let rec getAccess = function

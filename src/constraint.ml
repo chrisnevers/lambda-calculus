@@ -63,7 +63,6 @@ let rec cg gamma = function
 | Unop (Hd, e) ->
   let t1, c1, a1 = cg gamma e in
   let a = Gensym.gen_str "a" in
-  print_endline @@ "T1: " ^ ppTy t1;
   TyVar a, c1 @ [Eq (t1, TySum (TyVar a, TyNil))], a1 @ [a]
 | Unop (Tl, e) ->
   let t1, c1, a1 = cg gamma e in
@@ -81,6 +80,11 @@ let rec cg gamma = function
   let t3, c3, a3 = cg gamma e in
   let r = Gensym.gen_str "a" in
   TyVar r, c1 @ c2 @ c3 @ [Eq(t1, TyBool); Eq (t2, t3); Eq (t2, TyVar r); Eq (t2, TyVar r)], a1 @ a2 @ [r]
+| CatchWith (e, h) ->
+  let t1, c1, a1 = cg gamma e in
+  let t2, c2, a2 = cg gamma h in
+  let a = Gensym.gen_str "a" in
+  TyVar a, c1 @ c2 @ [Eq (t1, t2); Eq (t1, TyVar a)], a1 @ a2 @ [a]
 | Pair (l, r) ->
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in

@@ -49,6 +49,7 @@ type exp =
 | Nil
 | Match of exp * rule list
 | Err of string
+| CatchWith of exp * exp
 
 and rule =
 | Rule of exp * exp
@@ -75,6 +76,7 @@ let rec ppExp = function
 | Nil -> "[]"
 | Match (e, rs) -> "match " ^ ppExp e ^ " | " ^ ppRules rs
 | Err msg -> msg
+| CatchWith (e, h) -> "catch (" ^ ppExp e ^ ") with " ^ ppExp h
 
 and ppRule = function
 | Rule (ptn, action) -> ppExp ptn ^ " -> " ^ ppExp action

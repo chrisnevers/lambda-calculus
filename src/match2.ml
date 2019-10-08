@@ -186,15 +186,13 @@ let rec extractExp = function
 | Failure  -> Err "No pattern matches"
 | Success e -> e
 | IfEq (a, c, t, e) ->
-  If (Binop (Equal, accessToExp a, c), extractExp t, extractExp e)
+  CatchWith (If (Binop (Equal, accessToExp a, c), extractExp t, extractExp e), extractExp e)
 | LetPat (id, a, d) -> Let (Var id, accessToExp a, extractExp d)
 
 let rec pm = function
   | Match (e, rules) ->
     let matchRules = getRules rules in
-    print_endline @@ "Got rules";
     let decision = matcher (Obj e) matchRules in
-    print_endline @@ ppDecision decision;
     extractExp decision
   | Let (id, e, b) -> Let (id, pm e, pm b)
   | ow -> ow
