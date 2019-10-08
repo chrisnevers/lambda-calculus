@@ -40,7 +40,6 @@ rule token = parse
   | "tl"      { TTL }
   | "inl"     { TINL }
   | "inr"     { TINR }
-  | "case"    { TCASE }
   | "match"   { TMATCH }
   | "rec"     { TREC }
   | "print"   { TPRINT }

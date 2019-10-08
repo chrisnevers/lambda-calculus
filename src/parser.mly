@@ -26,7 +26,7 @@
 %token TCOMMA
 %token<string> TSTR
 %token TFST TSND
-%token TINL TINR TCASE TMATCH TBAR
+%token TINL TINR TMATCH TBAR
 %token TMUL TDIV
 %token TREC
 %token TSEMI
@@ -37,7 +37,7 @@
 %token TEOF
 
 %left TLET TIN TREC
-%left TCASE TMATCH TBAR
+%left TMATCH TBAR
 %left TSEMI
 %left TLAMBDA TDOT TARROW
 %left TIF TTHEN TELSE
@@ -80,7 +80,6 @@ exp:
   | TINR exp              { Inr $2 }
   | exp TCOLON exp        { Binop (Cons, $1, $3) }
   | TMATCH exp TWITH separated_list(TBAR, rules) { Match ($2, $4) }
-  | TCASE exp TBAR exp TBAR exp { Case ($2, $4, $6) }
   | TLET exp TEQ exp TIN exp    { Let($2, $4, $6) }
   | TREC exp TEQ exp TIN exp    {
     let x = $2 in
