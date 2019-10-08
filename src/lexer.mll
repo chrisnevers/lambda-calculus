@@ -36,6 +36,8 @@ rule token = parse
   | "in"      { TIN }
   | "fst"     { TFST }
   | "snd"     { TSND }
+  | "hd"      { THD }
+  | "tl"      { TTL }
   | "inl"     { TINL }
   | "inr"     { TINR }
   | "case"    { TCASE }

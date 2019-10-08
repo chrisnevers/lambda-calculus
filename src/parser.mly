@@ -32,6 +32,7 @@
 %token TSEMI
 %token TPRINT
 %token TUNIT
+%token THD TTL
 %token TLBRACKET TRBRACKET TWITH
 %token TEOF
 
@@ -46,7 +47,7 @@
 %left TMUL TDIV
 %right TCOLON
 %nonassoc TLBRACKET
-%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR TPRINT TUNIT TWITH
+%nonassoc TLPAREN TID TNUM TBOOL TFST TSND TINL TINR TSTR TPRINT TUNIT TWITH THD TTL
 %left APP
 
 %start<Ast.exp> program
@@ -73,6 +74,8 @@ exp:
   | TPRINT exp            { Unop (Print, $2) }
   | TFST exp              { Unop (Fst, $2) }
   | TSND exp              { Unop (Snd, $2) }
+  | THD exp               { Unop (Hd, $2) }
+  | TTL exp               { Unop (Tl, $2) }
   | TINL exp              { Inl $2 }
   | TINR exp              { Inr $2 }
   | exp TCOLON exp        { Binop (Cons, $1, $3) }

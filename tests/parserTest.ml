@@ -52,6 +52,10 @@ let parseNil () =
   let ast = parseString "[]" in
   assert_equal ast Nil
 
+let parsePair () =
+  let ast = parseString "(1, True, x)" in
+  assert_equal ast (Pair (Num 1, Pair (Bool true, Var "x")))
+
 let suite =
   "Tests" >:::
   [
@@ -65,6 +69,7 @@ let suite =
     "parseBool" >:: parseBool;
     "parseList" >:: parseList;
     "parseNil"  >:: parseNil;
+    "parsePair" >:: parsePair;
   ]
 
 let parserTests () = run_test_tt_main suite

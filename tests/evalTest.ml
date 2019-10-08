@@ -37,7 +37,23 @@ let evalList () =
 
 let evalNil () =
   let _, ast = eval Env.empty @@ parseString "[]" in
-  assert_equal ast Nil
+  assert_equal ast (List [])
+
+let evalHd () =
+  let _, ast = eval Env.empty @@ parseString "hd [1]" in
+  assert_equal ast (Num 1)
+
+let evalTl () =
+  let _, ast = eval Env.empty @@ parseString "tl [1]" in
+  assert_equal ast (List [])
+
+let evalIfThen () =
+  let _, ast = eval Env.empty @@ parseString "if True then 1 else 0" in
+  assert_equal ast (Num 1)
+
+let evalIfElse () =
+  let _, ast = eval Env.empty @@ parseString "if False then 1 else 0" in
+  assert_equal ast (Num 0)
 
 let suite =
   "Tests" >:::
@@ -51,6 +67,10 @@ let suite =
     "evalSwap"  >:: evalSwap;
     "evalList"  >:: evalList;
     "evalNil"   >:: evalNil;
+    "evalIfThen">:: evalIfThen;
+    "evalIfElse">:: evalIfElse;
+    "evalHd"    >:: evalHd;
+    "evalTl"    >:: evalTl;
   ]
 
 let evalTests () = run_test_tt_main suite
