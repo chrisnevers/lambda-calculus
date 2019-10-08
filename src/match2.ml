@@ -15,6 +15,7 @@ type pat =
 | PVar  of string
 | PLit  of exp
 | PList of pat list
+| PCons of pat * pat
 | PPair of pat * pat
 
 type matchRule = pat * exp
@@ -34,6 +35,8 @@ type access =
 | Nth of int * access
 | Fst of access
 | Snd of access
+| Hd of access
+| Tl of access
 
 type decision =
 | Failure
@@ -52,6 +55,7 @@ let ppCon con =
 let rec ppPat = function
   | PVar id -> "PVar " ^ id
   | PLit e -> "PLit " ^ ppExp e
+  | PCons (l, r) -> "PCons (" ^ ppPat l ^ ", " ^ ppPat r ^ ")"
   | PList ps -> "PList [" ^ String.concat ", " (List.map ppPat ps) ^ "]"
   | PPair (l, r) -> "PPair (" ^ ppPat l ^ ", " ^ ppPat r ^ ")"
 
@@ -65,6 +69,8 @@ let rec ppAccess = function
 | Nth (i, e) -> "Nth (" ^ string_of_int i ^ ", " ^ ppAccess e ^ ")"
 | Fst e -> "Fst " ^ ppAccess e
 | Snd e -> "Snd " ^ ppAccess e
+| Hd e -> "Hd " ^ ppAccess e
+| Tl e -> "Tl " ^ ppAccess e
 
 let rec ppDecision = function
 | Failure -> "Failure"
@@ -112,6 +118,10 @@ let staticMatch = function
 | con, Neg cs when con.span = List.length cs + 1 -> Yes
 | _ -> Maybe
 
+let isLit = function
+| Num _ | Str _ | Bool _ | Nil -> true
+| _ -> false
+
 let matcher matchObj allRules =
   (* Failure *)
   let rec fail = function
@@ -133,12 +143,14 @@ let matcher matchObj allRules =
     LetPat (id, obj, succeed (augment (ctx, desc), work, rhs, rules))
   | PLit l, Obj ol, desc, ctx, work, rhs, rules when l = ol ->
     succeed (augment (ctx, desc), work, rhs, rules)
-  | PLit l, Obj ol, desc, ctx, work, rhs, rules when l != ol ->
+  | PLit l, Obj ol, desc, ctx, work, rhs, rules when isLit ol && l != ol ->
     fail (desc, rules)
   | PLit l, obj, desc, ctx, work, rhs, rules ->
     let s = succeed (augment (ctx, desc), work, rhs, rules) in
     let f = fail (desc, rules) in
     IfEq (obj, l, s, f)
+  | PCons (l, r), obj, desc, ctx, work, rhs, rules ->
+    succeed (augment (ctx, desc), ([l; r], [Hd obj; Tl obj], [Neg []; Neg []]) :: work, rhs, rules)
   | PPair (l, r), Obj (Pair (l2, r2)), desc, ctx, work, rhs, rules ->
     succeed (augment (ctx, desc), ([l; r], [Obj l2; Obj r2], [Neg []; Neg []]) :: work, rhs, rules)
   | PPair (l, r), obj, desc, ctx, work, rhs, rules ->
@@ -147,14 +159,11 @@ let matcher matchObj allRules =
   (* Run it *)
   fail (Neg [], allRules)
 
-let isLit = function
-| Num _ | Str _ | Bool _ -> true
-| _ -> false
-
 let rec expToPat = function
 | e when isLit e -> PLit e
 | Var id -> PVar id
 | Pair (l, r) -> PPair (expToPat l, expToPat r)
+| Binop (Cons, l, r) -> PCons (expToPat l, expToPat r)
 
 let rec getRules = function
 | [] -> []
@@ -162,12 +171,16 @@ let rec getRules = function
 | Rule (Var id, e) :: tl -> (PVar id, e) :: getRules tl
 | Rule (Pair (l, r), e) :: tl ->
   (PPair (expToPat l, expToPat r), e) :: getRules tl
+| Rule (Binop (Cons, l, r), e) :: tl ->
+  (PCons (expToPat l, expToPat r), e) :: getRules tl
 
 let rec accessToExp = function
 | Obj e -> e
 | Nth (i, e) -> Binop (Nth, Num i, accessToExp e)
 | Fst e -> Unop (Fst, accessToExp e)
 | Snd e -> Unop (Snd, accessToExp e)
+| Hd e -> Unop (Hd, accessToExp e)
+| Tl e -> Unop (Tl, accessToExp e)
 
 let rec extractExp = function
 | Failure  -> Err "No pattern matches"

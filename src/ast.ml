@@ -61,7 +61,7 @@ let rec ppExp = function
 | Bool true -> "True"
 | Bool false -> "False"
 | Binop (o, l, r) -> ppExp l ^ " " ^ ppOp o ^ " " ^ ppExp r
-| Unop (o, e) -> ppOp o ^ " " ^ ppExp e
+| Unop (o, e) -> "(" ^ ppOp o ^ " " ^ ppExp e ^ ")"
 | If (c, t, e) -> "if " ^ ppExp c ^ " then " ^ ppExp t ^ " else " ^ ppExp e
 | Pair (l, r) -> "(" ^ ppExp l ^ ", " ^ ppExp r ^ ")"
 | Inl e -> "inl " ^ ppExp e
@@ -114,5 +114,4 @@ let isIntToIntOp = function
 | _ -> false
 
 let isIntToBoolOp = function
-| Equal -> true
 | _ -> false

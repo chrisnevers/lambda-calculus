@@ -8,7 +8,7 @@ module Env = Map.Make(String)
 let ppEnv e = Env.iter (fun k v -> print_string @@ k ^ " " ^ ppExp v ^ ", ") e
 
 let rec isValue = function
-| Num _ | Bool _ | Abs _ | Str _ | Unit _ | Nil -> true
+| Num _ | Bool _ | Abs _ | Str _ | Unit _ -> true
 | Pair (l, r) when isValue l && isValue r -> true
 | Inl v when isValue v -> true
 | Inr v when isValue v -> true
@@ -16,6 +16,7 @@ let rec isValue = function
 | _ -> false
 
 let rec eval env = function
+| Nil -> List []
 | m when isValue m -> env, m
 | Var id -> begin match Env.find_opt id env with
   | Some e -> env, e
@@ -69,9 +70,7 @@ let rec eval env = function
   | Hd, List [] -> error "Cannot perform hd empty list"
   | Tl, List [] -> error "Cannot perform tl empty list"
   | Hd, List (h::_) -> env, h
-  | Tl, List (_::t) ->
-    (* print_endline @@ "Tl: " ^ ppExp e';  *)
-    env, List t
+  | Tl, List (_::t) -> env, List t
   | Print, e -> print_endline @@ ppExp e; env, e
   end
 | Binop (op, l, r) ->

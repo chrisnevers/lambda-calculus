@@ -37,6 +37,10 @@ let rec cg gamma = function
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
   TyInt, c1 @ c2 @ [Eq (t1, TyInt); Eq (t2, TyInt)], a1 @ a2
+| Binop (Equal, l, r) ->
+  let t1, c1, a1 = cg gamma l in
+  let t2, c2, a2 = cg gamma r in
+  TyBool, c1 @ c2 @ [Eq (t1, t2);], a1 @ a2
 | Binop (op, l, r) when isIntToBoolOp op ->
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
@@ -59,6 +63,7 @@ let rec cg gamma = function
 | Unop (Hd, e) ->
   let t1, c1, a1 = cg gamma e in
   let a = Gensym.gen_str "a" in
+  print_endline @@ "T1: " ^ ppTy t1;
   TyVar a, c1 @ [Eq (t1, TySum (TyVar a, TyNil))], a1 @ [a]
 | Unop (Tl, e) ->
   let t1, c1, a1 = cg gamma e in
