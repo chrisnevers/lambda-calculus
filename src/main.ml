@@ -5,9 +5,12 @@ open Unify
 open Eval
 open InferHelper
 open Ast
+open Match2
 
 let interp buffer =
   let ast = Parser.program token buffer in
+  let ast = pm ast in
+  print_endline @@ ppExp ast;
   let ty, constraints, _ = cg [] ast in
   let subs = u constraints [] in
   let ty = getType subs ty in

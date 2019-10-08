@@ -31,6 +31,8 @@ let rec cg gamma = function
 | Unit _ -> TyUnit, [], []
 | Nil -> TySum (TyVar "a", TyNil), [], []
 | Var id -> lookup (TyVar id) gamma, [], []
+| Err msg ->
+  let a = Gensym.gen_str "a" in TyVar a, [], []
 | Binop (op, l, r) when isIntToIntOp op ->
   let t1, c1, a1 = cg gamma l in
   let t2, c2, a2 = cg gamma r in
@@ -44,11 +46,24 @@ let rec cg gamma = function
   let t2, c2, a2 = cg gamma r in
   let ty = TySum (t1, TyNil) in
   ty, c1 @ c2 @ [Eq (t2, ty)], a1 @ a2
+| Binop (Nth, i, l) ->
+  let t1, c1, a1 = cg gamma i in
+  let t2, c2, a2 = cg gamma l in
+  let t = Gensym.gen_str "a" in
+  TyVar t, c1 @ c2 @ [Eq (t1, TyInt); Eq (t2, TySum (TyVar t, TyNil))], a1 @ a2 @ [t]
 | Unop (Fst, e) ->
   let t1, c1, a1 = cg gamma e in
   let a = Gensym.gen_str "a" in
   let b = Gensym.gen_str "b" in
   TyVar a, c1 @ [Eq (t1, TyProd (TyVar a, TyVar b))], a1 @ [a; b]
+| Unop (Hd, e) ->
+  let t1, c1, a1 = cg gamma e in
+  let a = Gensym.gen_str "a" in
+  TyVar a, c1 @ [Eq (t1, TySum (TyVar a, TyNil))], a1 @ [a]
+| Unop (Tl, e) ->
+  let t1, c1, a1 = cg gamma e in
+  let a = Gensym.gen_str "a" in
+  TySum (TyVar a, TyNil), c1 @ [Eq (t1, TySum (TyVar a, TyNil))], a1 @ [a]
 | Unop (Snd, e) ->
   let t1, c1, a1 = cg gamma e in
   let a = Gensym.gen_str "a" in
@@ -75,7 +90,7 @@ let rec cg gamma = function
   let a = Gensym.gen_str "a" in
   let b = Gensym.gen_str "b" in
   TySum (TyVar a, TyVar b), c1 @ [Eq (t1, TyVar b); Eq (TyVar a, TyVar a)], a1 @ [a; b]
-| Match (c, l, r) ->
+| Case (c, l, r) ->
   let t1, c1, a1 = cg gamma c in
   let t2, c2, a2 = cg gamma l in
   let t3, c3, a3 = cg gamma r in

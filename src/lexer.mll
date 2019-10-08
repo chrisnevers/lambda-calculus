@@ -19,6 +19,8 @@ rule token = parse
   | "()"      { TUNIT }
   | '('       { TLPAREN }
   | ')'       { TRPAREN }
+  | "->"      { TARROW }
+  | "with"    { TWITH }
   | '+'       { TADD }
   | '-'       { TSUB }
   | '*'       { TMUL }
@@ -36,6 +38,7 @@ rule token = parse
   | "snd"     { TSND }
   | "inl"     { TINL }
   | "inr"     { TINR }
+  | "case"    { TCASE }
   | "match"   { TMATCH }
   | "rec"     { TREC }
   | "print"   { TPRINT }

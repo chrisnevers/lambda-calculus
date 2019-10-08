@@ -1,0 +1,3 @@
+match 5 with
+  0 -> "first"
+| n -> "second"

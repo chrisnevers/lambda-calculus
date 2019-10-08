@@ -8,6 +8,10 @@ type op =
 | Equal
 | Print
 | Cons
+| Hd
+| Tl
+| Nth
+| ConEq
 
 let ppOp = function
 | Add -> "+"
@@ -18,7 +22,11 @@ let ppOp = function
 | Snd -> "snd"
 | Equal -> "="
 | Print -> "print"
-| Cons -> "Cons"
+| Cons -> ":"
+| Hd -> "hd"
+| Tl -> "tl"
+| Nth -> "nth"
+| ConEq -> "consEq"
 
 type exp =
 | Var of string
@@ -32,13 +40,18 @@ type exp =
 | Pair of exp * exp
 | Inl of exp
 | Inr of exp
-| Match of exp * exp * exp
+| Case of exp * exp * exp
 | Fix of exp
 | Str of string
 | Let of exp * exp * exp
 | Unit
 | List of exp list
 | Nil
+| Match of exp * rule list
+| Err of string
+
+and rule =
+| Rule of exp * exp
 
 let rec ppExp = function
 | Var id -> id
@@ -53,13 +66,20 @@ let rec ppExp = function
 | Pair (l, r) -> "(" ^ ppExp l ^ ", " ^ ppExp r ^ ")"
 | Inl e -> "inl " ^ ppExp e
 | Inr e -> "inr " ^ ppExp e
-| Match (c, l, r) -> "match " ^ ppExp c ^ " | " ^ ppExp l ^ " | " ^ ppExp r
+| Case (c, l, r) -> "match " ^ ppExp c ^ " | " ^ ppExp l ^ " | " ^ ppExp r
 | Fix e -> "fix " ^ ppExp e
 | Str s -> s
-| Let (id, i, b) -> "let " ^ ppExp id ^ " = " ^ ppExp i ^ " " ^ ppExp b
+| Let (id, i, b) -> "let " ^ ppExp id ^ " = " ^ ppExp i ^ " in " ^ ppExp b
 | Unit -> "()"
 | List es -> "[" ^ String.concat ", " (List.map ppExp es) ^ "]"
 | Nil -> "[]"
+| Match (e, rs) -> "match " ^ ppExp e ^ " | " ^ ppRules rs
+| Err msg -> msg
+
+and ppRule = function
+| Rule (ptn, action) -> ppExp ptn ^ " -> " ^ ppExp action
+
+and ppRules rs = String.concat " | " (List.map ppRule rs)
 
 type ty =
 | TyInt

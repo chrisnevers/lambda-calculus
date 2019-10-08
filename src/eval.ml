@@ -12,6 +12,7 @@ let rec isValue = function
 | Pair (l, r) when isValue l && isValue r -> true
 | Inl v when isValue v -> true
 | Inr v when isValue v -> true
+| List _ -> true
 | _ -> false
 
 let rec eval env = function
@@ -48,7 +49,7 @@ let rec eval env = function
 | Fix (Abs (Var x, m)) ->
   let env' = Env.add x (Fix (Abs (Var x, m))) env in
   eval env' m
-| Match (c, l, r) ->
+| Case (c, l, r) ->
   let _, c' = eval env c in
   begin match c' with
   | Inl e -> eval env @@ App (l, e)
@@ -65,6 +66,12 @@ let rec eval env = function
   begin match op, e' with
   | Fst, Pair (l, _) -> env, l
   | Snd, Pair (_, r) -> env, r
+  | Hd, List [] -> error "Cannot perform hd empty list"
+  | Tl, List [] -> error "Cannot perform tl empty list"
+  | Hd, List (h::_) -> env, h
+  | Tl, List (_::t) ->
+    (* print_endline @@ "Tl: " ^ ppExp e';  *)
+    env, List t
   | Print, e -> print_endline @@ ppExp e; env, e
   end
 | Binop (op, l, r) ->
@@ -80,3 +87,4 @@ let rec eval env = function
     | Cons, h, Nil -> env, List [h]
     | Cons, h, List t -> env, List (h :: t)
   end
+| Err msg -> error msg

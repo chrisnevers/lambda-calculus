@@ -1,0 +1,4 @@
+let x = 5 in
+match x with
+  0 -> False
+| 5 -> True
